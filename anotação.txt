@@ -1,0 +1,37 @@
+Consumir - https://fakestoreapi.com/
+Remover - Entidade Produtos
+Trocar Get para o https://fakestoreapi.com/products
+
+fetch('https://fakestoreapi.com/carts',{
+            method:"POST",
+            body:JSON.stringify(
+                {
+                    userId:5,
+                    date:2020-02-03,
+                    products:[{productId:5,quantity:1},{productId:1,quantity:5}]
+                }
+            )
+        })
+            .then(res=>res.json())
+            .then(json=>console.log(json))
+
+Exemplo Get
+http: ^1.1.0
+
+import 'package:http/http.dart' as http;
+Future<void> _fetchData() async {
+    try {
+      final response = await http
+          .get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
+      if (response.statusCode == 200) {
+        setState(() {
+          _data = jsonDecode(response.body);
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (error) {
+      // ignore: avoid_print
+      print(error);
+    }
+  }

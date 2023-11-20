@@ -4,6 +4,7 @@ import 'package:httpandsqlite/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:http/http.dart' as http;
 
 import '../model/produto.dart';
 
@@ -18,13 +19,6 @@ class DataBase {
     "INSERT INTO Usuario(id, username, password) VALUES(5,'user5', 'password')",
     "INSERT INTO Usuario(id, username, password) VALUES(6,'user6', 'password')",
     "INSERT INTO Usuario(id, username, password) VALUES(7,'user7', 'password')",
-    "INSERT INTO Produto(id, nome, preco) VALUES(1,'produto 1', 10.0)",
-    "INSERT INTO Produto(id, nome, preco) VALUES(2,'produto 2', 15.0)",
-    "INSERT INTO Produto(id, nome, preco) VALUES(3,'produto 3', 20.0)",
-    "INSERT INTO Produto(id, nome, preco) VALUES(4,'produto 4', 25.0)",
-    "INSERT INTO Produto(id, nome, preco) VALUES(5,'produto 5', 30.0)",
-    "INSERT INTO Produto(id, nome, preco) VALUES(6,'produto 6', 35.0)",
-    "INSERT INTO Produto(id, nome, preco) VALUES(7,'produto 7', 40.0)",
   ];
 
   Future<void> openDatabaseConnection() async {
@@ -36,18 +30,9 @@ class DataBase {
         await db.execute(
           'CREATE TABLE Usuario(id INTEGER PRIMARY KEY, username TEXT, password TEXT)',
         );
-        await db.execute(
-          'CREATE TABLE Produto(id INTEGER PRIMARY KEY, nome TEXT, preco REAL)',
-        );
         for (var element in inserts) {
           await db.execute(element);
         }
-        await db.execute(
-          'CREATE TABLE UsuarioProduto(usuarioId INTEGER, produtoId INTEGER, quantidade INTEGER, '
-          'FOREIGN KEY (usuarioId) REFERENCES Usuario(id), '
-          'FOREIGN KEY (produtoId) REFERENCES Produto(id), '
-          'PRIMARY KEY (usuarioId, produtoId))',
-        );
       },
     );
   }
@@ -64,12 +49,17 @@ class DataBase {
   }
 
   Future<List<Produto>> getAllProdutos() async {
-    final List<Map<String, dynamic>> maps = await _database.query('Produto');
-    return List.generate(maps.length, (i) {
+    final response =
+        await http.get(Uri.parse('https://fakestoreapi.com/products'));
+    List<dynamic> data = [];
+    if (response.statusCode == 200) {
+      data = jsonDecode(response.body);
+    }
+    return List.generate(data.length, (i) {
       return Produto(
-        id: maps[i]['id'],
-        nome: maps[i]['nome'],
-        preco: maps[i]['preco'],
+        id: data[i]['id'],
+        nome: data[i]['title'],
+        preco: data[i]['price'],
       );
     });
   }
@@ -90,7 +80,6 @@ class DataBase {
 
   Future<List<Produto>> getProdutos(SharedPreferences sharedPreferences) async {
     String? produtosJson = sharedPreferences.getString('produtos');
-
     if (produtosJson != null && produtosJson.isNotEmpty) {
       List<dynamic> produtosList = jsonDecode(produtosJson);
 

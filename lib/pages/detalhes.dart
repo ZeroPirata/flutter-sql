@@ -20,10 +20,10 @@ class DetalhesProduto extends StatelessWidget {
             Text('Produto: ${produto.nome}'),
             Text('Quantidade: ${produto.quantidade}'),
             Text(
-                'Valor: R\$ ${(produto.preco * double.tryParse(produto.quantidade.toString())!).toStringAsFixed(2)}'),
+                'Valor: R\$ ${(produto.preco! * double.tryParse(produto.quantidade.toString())!).toStringAsFixed(2)}'),
             if (produto.quantidade != null && produto.quantidade! >= 10)
               Text(
-                'Desconto: R\$ ${(produto.preco * double.tryParse(produto.quantidade.toString())! * 0.05).toStringAsFixed(2)}',
+                'Desconto: R\$ ${(produto.preco! * double.tryParse(produto.quantidade.toString())! * 0.05).toStringAsFixed(2)}',
                 style: const TextStyle(color: Colors.green),
               ),
             const SizedBox(height: 20),

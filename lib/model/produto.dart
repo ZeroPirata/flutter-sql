@@ -1,8 +1,8 @@
 class Produto {
-  final int id;
-  final String nome;
-  final double preco;
-  final int? quantidade;
+  final dynamic id;
+  final dynamic nome;
+  final dynamic preco;
+  final dynamic quantidade;
 
   Produto(
       {required this.id,
